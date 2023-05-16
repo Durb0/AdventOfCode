@@ -1,0 +1,93 @@
+package exercises.aoc2019.day03;
+
+import utilities.A_AOC;
+import exercises.objects.Direction;
+import exercises.objects.Position;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * <pre>
+ * AdventOfCode 2019 day 3's instructions are <a href="https://adventofcode.com/2019/day/3">here</a>
+ * Exercise's input is <a href="https://adventofcode.com/2019/day/3/input">here</a>
+ * </pre>
+ */
+public class AOCRunner extends A_AOC {
+    private final List<List<Position>> chains = new ArrayList<>();
+    private final Position start = new Position(0, 0);
+
+    @Override
+    public void test() {
+        if(isExample) {
+            super.test(159, 610);
+        } else {
+            super.test(855, 11238);
+        }
+    }
+
+    @Override
+    public void run() {
+        fillWires(inputList);
+        List<Position> commonPositions = findCommonPositions();
+        Position nearestPosition = findNearestPosition(commonPositions);
+        solution1 = nearestPosition.getDistanceFrom0();
+        solution2 = findNearestCommonDistance(commonPositions);
+    }
+
+    private void fillWires(List<String> input) {
+        for (String wireSections : input) {
+            Position currentPosition = start;
+            List<Position> wire = new ArrayList<>();
+            String[] sections = wireSections.split(",");
+            for (String section : sections) {
+                currentPosition = fillWireSection(currentPosition, wire, section);
+            }
+            chains.add(wire);
+        }
+    }
+
+    private static Position fillWireSection(Position currentPosition, List<Position> wire, String movement) {
+        Position nextPosition = getNextPosition(currentPosition, movement);
+        List<Position> interval = Position.interval(currentPosition, nextPosition);
+        interval.remove(0); // Already saved
+        wire.addAll(interval);
+        return nextPosition;
+    }
+
+    private static Position getNextPosition(Position currentPosition, String item) {
+        Direction direction = Direction.charToDirection(item.charAt(0));
+        int steps = Integer.parseInt(item.substring(1));
+        Position newPosition = new Position(currentPosition);
+
+        newPosition.move(direction, steps);
+        return newPosition;
+    }
+
+    private List<Position> findCommonPositions() {
+        List<Position> p0 = chains.get(0); // Optimised for a stream/filter
+        Set<Position> p1 = new HashSet<>(chains.get(1)); // Optimised for a contains
+        return p0.stream()
+                .filter(p1::contains)
+                .toList();
+    }
+
+    private Position findNearestPosition(List<Position> commonPositions) {
+        return commonPositions.stream()
+                .min(Position::minFromOrigin)
+                .orElse(start);
+    }
+
+    private int findNearestCommonDistance(List<Position> commonPositions) {
+        int minPos = Integer.MAX_VALUE;
+        for (Position position : commonPositions) {
+            int position1 = chains.get(0).indexOf(position) + 1;
+            int position2 = chains.get(1).indexOf(position) + 1;
+            int minDistance = position1 + position2;
+            minPos = Math.min(minDistance, minPos);
+        }
+        return minPos;
+    }
+}
