@@ -5,9 +5,11 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+import static utilities.FileIO.DELIMITER;
+
 @Data
 public class Directory {
-    private static final String RN = "\r\n";
+    private static final String RN = DELIMITER;
     private String name;
     private List<Directory> directories;
     private List<File> files;

@@ -28,7 +28,6 @@ public class AOCFactory {
     public static A_AOC getAOC(int year, int day, boolean isExample) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, IOException {
         String z = (day < 10) ? "0" : "";
         String classPath = "exercises.aoc" + year + ".day" + z + day + ".AOCRunner";
-        String url = "https://adventofcode.com/" + year + "/day/" + day + "/input";
 
         // Get the AOC class to run
         Class<?> classRef = Class.forName(classPath);
@@ -36,17 +35,7 @@ public class AOCFactory {
         aoc.setExample(isExample);
         aoc.setDay(day);
         aoc.setYear(year);
-
-        // If possible, get the input from the URL, else from our local files
-        if(!isExample) {
-            try {
-                aoc.readInput(url);
-            } catch (Exception e) {
-                aoc.readInputFile("puzzle_input/" + year + "/aoc" + day + ".txt");
-            }
-        } else {
-            aoc.readInputFile("example_input/" + year + "/aoc" + day + ".txt");
-        }
+        aoc.setInput();
 
         return aoc;
     }

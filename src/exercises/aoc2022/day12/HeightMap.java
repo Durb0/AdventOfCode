@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static utilities.FileIO.DELIMITER;
+
 @Data
 public class HeightMap {
     private final Map<Position, Cell> grid = new HashMap<>();
@@ -112,7 +114,7 @@ public class HeightMap {
                 Cell cell = grid.get(p);
                 stringBuilder.append("\t").append(cell.getDistance(isFromStart));
             }
-            stringBuilder.append("\r\n");
+            stringBuilder.append(DELIMITER);
         }
         return stringBuilder.toString();
     }

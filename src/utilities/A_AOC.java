@@ -6,6 +6,8 @@ import lombok.Setter;
 import java.io.IOException;
 import java.util.List;
 
+import static utilities.FileIO.DELIMITER;
+
 /**
  * AdventOfCode generic interface that is returned by the AOCFactory
  * Must be used to run a program
@@ -36,7 +38,7 @@ public abstract class A_AOC {
      * @throws IOException if the input file does not exist
      */
     public void readInputFile(String file) throws IOException {
-        inputList = FileLoader.readListFromFile(file);
+        inputList = FileIO.readListFromFile(file);
     }
 
     /**
@@ -45,8 +47,10 @@ public abstract class A_AOC {
      * @param url : The input file path (located in resources) to run
      * @throws IOException if the input file does not exist
      */
-    public void readInput(String url) throws IOException {
-        inputList = FileLoader.readListFromURL(url);
+    public void readInputURL(String url) throws IOException {
+        inputList = FileIO.readListFromURL(url);
+        String inputStr = String.join(DELIMITER, inputList);
+        FileIO.writeInFile(getPuzzleInputPath(), inputStr);
     }
 
     /**
@@ -78,4 +82,29 @@ public abstract class A_AOC {
      * The legacy variable inputList contains the data inputs
      */
     public abstract void run();
+
+    public void setInput() throws IOException {
+        // If possible, get the input from the URL, else from our local files
+        if(!isExample) {
+            try {
+                readInputURL(getPuzzleInputURL());
+            } catch (Exception e) {
+                readInputFile(getPuzzleInputPath());
+            }
+        } else {
+            readInputFile(getExampleInputPath());
+        }
+    }
+
+    private String getPuzzleInputURL() {
+        return "https://adventofcode.com/" + year + "/day/" + day + "/input";
+    }
+
+    private String getExampleInputPath() {
+        return "example_input/" + year + "/aoc" + day + ".txt";
+    }
+
+    private String getPuzzleInputPath() {
+        return "puzzle_input/" + year + "/aoc" + day + ".txt";
+    }
 }

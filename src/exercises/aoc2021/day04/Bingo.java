@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static utilities.FileIO.DELIMITER;
+
 @Getter
 public class Bingo {
     private final List<Map<String, Boolean>> grid = new ArrayList<>();
@@ -65,7 +67,7 @@ public class Bingo {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        grid.forEach(stringBooleanMap -> stringBuilder.append(stringBooleanMap).append("\r\n"));
+        grid.forEach(stringBooleanMap -> stringBuilder.append(stringBooleanMap).append(DELIMITER));
         return stringBuilder.toString();
     }
 }

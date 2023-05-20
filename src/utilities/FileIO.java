@@ -1,7 +1,9 @@
 package utilities;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,11 +12,13 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FileLoader {
-    private static final String RESOURCE_PATH = System.getProperty("user.dir") + "\\resources\\";
-    public static String localSession;
+public class FileIO {
+    protected static final String RESOURCE_PATH = System.getProperty("user.dir") + "\\resources\\";
+    public static final String DELIMITER = "\r\n";
+    private static String localSession;
 
-    private FileLoader() {} // Necessary
+    private FileIO() {
+    } // Necessary
 
     /**
      * Read a file and return the content
@@ -63,5 +67,20 @@ public class FileLoader {
         }
         bufferedReader.close();
         return stringList;
+    }
+
+    public static void saveLocalSession() throws IOException {
+        localSession = readListFromFile("localSession").get(0);
+    }
+
+    public static void createLocalSession() throws IOException {
+        writeInFile(localSession, "REGISTER YOUR AOC COOKIE HERE");
+    }
+
+    public static void writeInFile(String fileName, String content) throws IOException {
+        try (FileWriter fileWriter = new FileWriter(RESOURCE_PATH + fileName, true);
+            BufferedWriter writer = new BufferedWriter(fileWriter)) {
+            writer.append(content);
+        }
     }
 }

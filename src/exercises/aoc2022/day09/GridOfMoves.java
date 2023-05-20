@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static utilities.FileIO.DELIMITER;
+
 public class GridOfMoves {
     final List<Position> knotPositions = new ArrayList<>();
     private final Map<Integer, List<Integer>> gridQueue = new TreeMap<>();
@@ -119,7 +121,11 @@ public class GridOfMoves {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         gridQueue.values().forEach(Collections::sort);
-        gridQueue.forEach((posX, mapY) -> stringBuilder.append(posX).append(" > ").append(mapY).append("\r\n"));
+        gridQueue.forEach((posX, mapY) -> stringBuilder
+                .append(posX)
+                .append(" > ")
+                .append(mapY)
+                .append(DELIMITER));
         return stringBuilder.toString();
     }
 }

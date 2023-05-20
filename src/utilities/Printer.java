@@ -1,5 +1,7 @@
 package utilities;
 
+import static utilities.FileIO.DELIMITER;
+
 public class Printer {
 
     private Printer() {
@@ -7,7 +9,7 @@ public class Printer {
 
     public static void println(Object o) {
         print(o);
-        print("\r\n");
+        print(DELIMITER);
     }
 
     public static void print(Object o) {
