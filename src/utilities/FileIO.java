@@ -78,7 +78,7 @@ public class FileIO {
     }
 
     public static void writeInFile(String fileName, String content) throws IOException {
-        try (FileWriter fileWriter = new FileWriter(RESOURCE_PATH + fileName, true);
+        try (FileWriter fileWriter = new FileWriter(RESOURCE_PATH + fileName, false);
             BufferedWriter writer = new BufferedWriter(fileWriter)) {
             writer.append(content);
         }
