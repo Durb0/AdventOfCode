@@ -8,8 +8,8 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * <pre>
- * AdventOfCode 2015 day 3's instructions are <a href="https://adventofcode.com/2015/day/3">here</a>
- * Exercise's input is <a href="https://adventofcode.com/2015/day/3/input">here</a>
+ * AdventOfCode 2015 day 4's instructions are <a href="https://adventofcode.com/2015/day/4">here</a>
+ * Exercise's input is <a href="https://adventofcode.com/2015/day/4/input">here</a>
  * </pre>
  */
 public class AOCRunner extends A_AOC {
