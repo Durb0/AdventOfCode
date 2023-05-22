@@ -21,7 +21,7 @@ public class AOCRunner extends A_AOC {
         if(isExample) {
             super.test("18f47a30", "05ace8e3");
         } else {
-            super.test("f77a0e6e", "");
+            super.test("f77a0e6e", "999828ec");
         }
     }
 
