@@ -19,7 +19,7 @@ public class AOCRunner extends A_AOC {
         if (isExample) {
             super.test("10", "6");
         } else {
-            super.test("245", "");
+            super.test("245", "133");
         }
     }
 

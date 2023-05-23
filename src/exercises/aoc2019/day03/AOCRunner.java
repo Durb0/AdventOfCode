@@ -16,7 +16,8 @@ import java.util.Set;
  * </pre>
  */
 public class AOCRunner extends A_AOC {
-    private final List<List<Position>> chains = new ArrayList<>();
+    private record Wire(List<Position> positions) {}
+    private final List<Wire> wires = new ArrayList<>();
     private final Position start = new Position(0, 0);
 
     @Override
@@ -40,12 +41,12 @@ public class AOCRunner extends A_AOC {
     private void fillWires(List<String> input) {
         for (String wireSections : input) {
             Position currentPosition = start;
-            List<Position> wire = new ArrayList<>();
+            List<Position> positions = new ArrayList<>();
             String[] sections = wireSections.split(",");
             for (String section : sections) {
-                currentPosition = fillWireSection(currentPosition, wire, section);
+                currentPosition = fillWireSection(currentPosition, positions, section);
             }
-            chains.add(wire);
+            wires.add(new Wire(positions));
         }
     }
 
@@ -67,8 +68,8 @@ public class AOCRunner extends A_AOC {
     }
 
     private List<Position> findCommonPositions() {
-        List<Position> p0 = chains.get(0); // Optimised for a stream/filter
-        Set<Position> p1 = new HashSet<>(chains.get(1)); // Optimised for a contains
+        List<Position> p0 = wires.get(0).positions; // Optimised for a stream/filter
+        Set<Position> p1 = new HashSet<>(wires.get(1).positions); // Optimised for a contains
         return p0.stream()
                 .filter(p1::contains)
                 .toList();
@@ -83,8 +84,8 @@ public class AOCRunner extends A_AOC {
     private int findNearestCommonDistance(List<Position> commonPositions) {
         int minPos = Integer.MAX_VALUE;
         for (Position position : commonPositions) {
-            int position1 = chains.get(0).indexOf(position) + 1;
-            int position2 = chains.get(1).indexOf(position) + 1;
+            int position1 = wires.get(0).positions.indexOf(position) + 1;
+            int position2 = wires.get(1).positions.indexOf(position) + 1;
             int minDistance = position1 + position2;
             minPos = Math.min(minDistance, minPos);
         }
