@@ -53,9 +53,10 @@ public class Launcher {
         int year = launcherArgs.getYear();
         int day = launcherArgs.getDay();
         boolean isExample = launcherArgs.isExample();
+        boolean getFromURL = !launcherArgs.isTestAll();
 
         try {
-            aoc = AOCFactory.getAOC(year, day, isExample);
+            aoc = AOCFactory.getAOC(year, day, isExample, getFromURL);
         } catch (Exception e) {
             throw new ClassNotFoundException();
         }

@@ -30,6 +30,8 @@ public abstract class A_AOC {
     private int year;
     @Setter
     protected boolean isExample;
+    @Setter
+    protected boolean getFromURL;
 
     /**
      * Set the basic input for the instance
@@ -86,13 +88,21 @@ public abstract class A_AOC {
     public void setInput() throws IOException {
         // If possible, get the input from the URL, else from our local files
         if(!isExample) {
+            getPuzzleInput();
+        } else {
+            readInputFile(getExampleInputPath());
+        }
+    }
+
+    private void getPuzzleInput() throws IOException {
+        if(getFromURL) {
             try {
                 readInputURL(getPuzzleInputURL());
             } catch (Exception e) {
                 readInputFile(getPuzzleInputPath());
             }
         } else {
-            readInputFile(getExampleInputPath());
+            readInputFile(getPuzzleInputPath());
         }
     }
 
