@@ -1,9 +1,9 @@
 package exercises.aoc2022.day17;
 
-import utilities.errors.NoSuchElementInListException;
-import utilities.A_AOC;
 import exercises.objects.Position;
 import exercises.objects.Shape;
+import utilities.A_AOC;
+import utilities.errors.NoSuchElementInListException;
 
 import java.util.ArrayList;
 import java.util.Collections;

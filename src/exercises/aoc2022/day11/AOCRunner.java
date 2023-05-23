@@ -1,7 +1,7 @@
 package exercises.aoc2022.day11;
 
-import utilities.errors.NotAcceptedValue;
 import utilities.A_AOC;
+import utilities.errors.NotAcceptedValue;
 
 import java.util.ArrayList;
 import java.util.Collections;

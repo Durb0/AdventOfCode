@@ -1,7 +1,7 @@
 package exercises.aoc2021.day05;
 
-import utilities.A_AOC;
 import exercises.objects.Position;
+import utilities.A_AOC;
 
 import java.util.HashMap;
 import java.util.Map;

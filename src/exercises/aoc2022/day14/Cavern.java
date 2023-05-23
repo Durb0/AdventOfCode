@@ -1,7 +1,7 @@
 package exercises.aoc2022.day14;
 
-import lombok.Setter;
 import exercises.objects.Position;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;

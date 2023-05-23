@@ -1,8 +1,8 @@
 package exercises.aoc2019.day03;
 
-import utilities.A_AOC;
 import exercises.objects.Direction;
 import exercises.objects.Position;
+import utilities.A_AOC;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,10 +1,7 @@
 package exercises.aoc2015.day04;
 
-import org.apache.hc.client5.http.utils.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import utilities.A_AOC;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * <pre>
@@ -33,20 +30,10 @@ public class AOCRunner extends A_AOC {
     private static int findPasswordForLeading(String input, String leading) {
         int password = 0;
         String output = "";
-        MessageDigest md = getMD5();
         while(!output.startsWith(leading)) {
             password++;
-            byte[] result = md.digest((input + password).getBytes());
-            output = Hex.encodeHexString(result);
+            output = DigestUtils.md5Hex(input + password);
         }
         return password;
-    }
-
-    private static MessageDigest getMD5() {
-        try {
-            return MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

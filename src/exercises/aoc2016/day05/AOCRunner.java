@@ -1,10 +1,8 @@
 package exercises.aoc2016.day05;
 
-import org.apache.hc.client5.http.utils.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 import utilities.A_AOC;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,37 +26,26 @@ public class AOCRunner extends A_AOC {
     @Override
     public void run() {
         String door = inputList.get(0);
-        solution1 = findDoorPassword(door);
-        solution2 = findDoorPassword2(door);
+        solution1 = findDoorPassword(door, false);
+        solution2 = findDoorPassword(door, true);
     }
 
-    private static String findDoorPassword(String input) {
-        StringBuilder passwordBuilder = new StringBuilder();
-        int attempt = 0;
-        MessageDigest md = getMD5();
-        while (passwordBuilder.length() < 8) {
-            String output = "";
-            while(!output.startsWith("00000")) {
-                byte[] result = md.digest((input + attempt).getBytes());
-                output = Hex.encodeHexString(result);
-                attempt++;
-            }
-            passwordBuilder.append(output.charAt(5));
-        }
-        return passwordBuilder.toString();
-    }
-
-    private static String findDoorPassword2(String input) {
+    private static String findDoorPassword(String input, boolean loadUniques) {
         Map<Integer, String> hashes = new HashMap<>();
         int attempt = 0;
-        MessageDigest md = getMD5();
         while (hashes.size() < 8) {
             String output = "";
             while(!output.startsWith("00000")) {
-                byte[] result = md.digest((input + attempt).getBytes());
-                output = Hex.encodeHexString(result);
+                output =  DigestUtils.md5Hex(input + attempt);
                 attempt++;
             }
+            saveNextChar(hashes, output, loadUniques);
+        }
+        return String.join("", hashes.values());
+    }
+
+    private static void saveNextChar(Map<Integer, String> hashes, String output, boolean loadUniques) {
+        if(loadUniques) {
             try {
                 int index = Character.getNumericValue(output.charAt(5));
                 if (index < 8 && !hashes.containsKey(index)) {
@@ -67,15 +54,8 @@ public class AOCRunner extends A_AOC {
             } catch (Exception ignored) {
                 // Ignored
             }
-        }
-        return String.join("", hashes.values());
-    }
-
-    private static MessageDigest getMD5() {
-        try {
-            return MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        } else {
+            hashes.put(hashes.size(), String.valueOf(output.charAt(5)));
         }
     }
 }

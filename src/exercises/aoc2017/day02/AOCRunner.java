@@ -1,7 +1,7 @@
 package exercises.aoc2017.day02;
 
-import utilities.errors.NoSuchElementInListException;
 import utilities.A_AOC;
+import utilities.errors.NoSuchElementInListException;
 
 import java.util.Arrays;
 import java.util.Collections;

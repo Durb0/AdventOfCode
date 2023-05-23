@@ -1,7 +1,7 @@
 package exercises.aoc2022.day04;
 
-import utilities.A_AOC;
 import exercises.objects.Range;
+import utilities.A_AOC;
 
 /**
  * <pre>

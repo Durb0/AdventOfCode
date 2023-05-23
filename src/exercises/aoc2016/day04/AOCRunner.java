@@ -1,20 +1,13 @@
 package exercises.aoc2016.day04;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import utilities.errors.NotAcceptedValue;
 import utilities.A_AOC;
+import utilities.errors.NotAcceptedValue;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -23,11 +16,10 @@ import java.util.stream.Collectors;
  * </pre>
  */
 public class AOCRunner extends A_AOC {
-    private record RoomData(String name, int id, String checksum){}
 
     @Override
     public void test() {
-        if(isExample) {
+        if (isExample) {
             super.test("1514", "404");
         } else {
             super.test("137896", "501");
@@ -38,22 +30,21 @@ public class AOCRunner extends A_AOC {
     public void run() {
         List<RoomData> realRooms = getRealRooms();
         solution1 = realRooms.stream()
-                .map(RoomData::id)
+                .map(RoomData::getId)
                 .mapToInt(Integer::intValue)
                 .sum();
         solution2 = realRooms.stream()
-                .map(AOCRunner::uncypherRoomName)
-                .filter(nameIdPair -> nameIdPair.getLeft().contains("northpole"))
-                .map(Pair::getRight)
+                .filter(nameIdPair -> nameIdPair.uncypherRoomName().contains("northpole"))
+                .map(RoomData::getId)
                 .findFirst()
                 .orElse(0);
     }
 
     private List<RoomData> getRealRooms() {
         List<RoomData> realRooms = new ArrayList<>();
-        for(String line : inputList) {
+        for (String line : inputList) {
             RoomData roomData = extractRoomData(line);
-            if(isRealRoom(roomData.name, roomData.checksum)) {
+            if (roomData.isReal()) {
                 realRooms.add(roomData);
             }
         }
@@ -72,45 +63,5 @@ public class AOCRunner extends A_AOC {
             return new RoomData(name, id, checksum);
         }
         throw new NotAcceptedValue(line);
-    }
-
-
-    private boolean isRealRoom(String name, String checksum) {
-        Map<Character, Integer> frequency = new HashMap<>();
-        for(char c : name.toCharArray()) {
-            frequency.put(c, frequency.getOrDefault(c, 0) + 1);
-        }
-
-        String newCheckSum = frequency.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey()) // filter by char
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())) // filter by frequency
-                .map(Map.Entry::getKey) // get char only
-                .map(String::valueOf) // convert to string
-                .filter(Predicate.not("-"::equals)) // remove '-'
-                .limit(5) // get top five
-                .collect(Collectors.joining(""));
-
-        return newCheckSum.equals(checksum);
-    }
-
-    private static Pair<String, Integer> uncypherRoomName(RoomData roomData) {
-        String input = roomData.name;
-        StringBuilder output = new StringBuilder();
-
-        for (int position = 0; position < input.length(); position++) {
-            char character = input.charAt(position);
-            char newChar = shiftCharacter(character, roomData.id);
-            output.append(newChar);
-        }
-
-        return new ImmutablePair<>(output.toString(), roomData.id);
-    }
-
-    private static char shiftCharacter(char character, int shift) {
-        if (Character.isLetter(character)) {
-            int delta = (character - 'a' + shift) % 26;
-            return (char) ('a' + delta);
-        }
-        return  ' ';
     }
 }

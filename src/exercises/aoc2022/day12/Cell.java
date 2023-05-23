@@ -1,7 +1,7 @@
 package exercises.aoc2022.day12;
 
-import lombok.Data;
 import exercises.objects.Position;
+import lombok.Data;
 
 @Data
 public class Cell {

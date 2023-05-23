@@ -1,8 +1,8 @@
 package exercises.aoc2018.day04;
 
+import utilities.A_AOC;
 import utilities.errors.NoSuchElementInListException;
 import utilities.errors.NotAcceptedValue;
-import utilities.A_AOC;
 
 import java.util.ArrayList;
 import java.util.List;
