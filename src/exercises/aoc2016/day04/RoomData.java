@@ -3,48 +3,39 @@ package exercises.aoc2016.day04;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
 public class RoomData {
-    private String name;
+    public static final int ALPHABET_SIZE = 26;
     private int id;
+    private String name;
     private String checksum;
 
     public boolean isReal() {
         Map<String, Long> charFrequencies = getCharFrequencies();
 
         String newCheckSum = charFrequencies.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey()) // filter by char
-                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())) // filter by frequency
+                .sorted(Map.Entry.comparingByKey()) // filter Alphabetical
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue())) // filter by frequency decreasing
                 .limit(5) // get top five
-                .map(Map.Entry::getKey) // convert char to string
+                .map(Map.Entry::getKey)
                 .collect(Collectors.joining(""));
 
         return newCheckSum.equals(checksum);
     }
 
     private Map<String, Long> getCharFrequencies() {
-        String[] cleanName = name
-                .replace("-", "")
-                .split("");
-        Map<String, Long> frequencies = new HashMap<>();
-        List<String> charList = Arrays.asList(cleanName);
-        Set<String> charSet = new HashSet<>(charList);
+        String cleanName = name.replace("-", "");
 
-        for (String character : charSet) {
-            long frequency = charList.stream().filter(s -> s.equals(character)).count();
-            frequencies.put(character, frequency);
-        }
-        return frequencies;
+        return cleanName.chars()
+                .mapToObj(c -> (char) c)
+                .map(String::valueOf)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
     public String uncypherRoomName() {
@@ -61,9 +52,11 @@ public class RoomData {
 
     private char shiftCharacter(char character, int shift) {
         if (Character.isLetter(character)) {
-            int delta = (character - 'a' + shift) % 26;
-            return (char) ('a' + delta);
+            int originalAlphabetPosition = character - 'a';
+            int shiftedAlphabetPosition = (originalAlphabetPosition + shift) % ALPHABET_SIZE;
+            return (char) ('a' + shiftedAlphabetPosition);
         }
+        // character = '-'
         return ' ';
     }
 

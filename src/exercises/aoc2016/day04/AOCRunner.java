@@ -6,8 +6,10 @@ import utilities.errors.NotAcceptedValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -34,10 +36,16 @@ public class AOCRunner extends A_AOC {
                 .mapToInt(Integer::intValue)
                 .sum();
         solution2 = realRooms.stream()
-                .filter(nameIdPair -> nameIdPair.uncypherRoomName().contains("northpole"))
+                .filter(roomData -> roomData.uncypherRoomName().contains("northpole"))
                 .map(RoomData::getId)
-                .findFirst()
-                .orElse(0);
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    if (list.isEmpty()) {
+                        throw new NoSuchElementException("No rooms are related to the North Pole");
+                    } else if (list.size() > 1) {
+                        throw new IllegalArgumentException("Too many elements related to the North Pole");
+                    }
+                    return list.get(0);
+                }));
     }
 
     private List<RoomData> getRealRooms() {
@@ -52,15 +60,15 @@ public class AOCRunner extends A_AOC {
     }
 
     private RoomData extractRoomData(String line) {
-        Pattern pattern = Pattern.compile("\\d+.+");
-        Matcher matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            String match = matcher.group();
-            String name = StringUtils.removeEnd(line, match);
-            String[] split = match.split("\\[");
+        Pattern patternAfterName = Pattern.compile("\\d+.+");
+        Matcher matcherAfterName = patternAfterName.matcher(line);
+        if (matcherAfterName.find()) {
+            String afterName = matcherAfterName.group();
+            String name = StringUtils.removeEnd(line, afterName);
+            String[] split = afterName.split("\\[");
             int id = Integer.parseInt(split[0]);
             String checksum = StringUtils.removeEnd(split[1], "]");
-            return new RoomData(name, id, checksum);
+            return new RoomData(id, name, checksum);
         }
         throw new NotAcceptedValue(line);
     }
