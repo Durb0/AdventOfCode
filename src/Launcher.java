@@ -76,7 +76,7 @@ public class Launcher {
             FileIO.saveLocalSession();
         } catch (IOException e) {
             FileIO.createLocalSession();
-            throw new FileNotFoundException("Votre fichier localSession a été créé, veuillez le renseigner");
+            throw new FileNotFoundException("Your localSession file has been created, please fill it in");
         }
     }
 }

@@ -35,7 +35,7 @@ public class FileIO {
     }
 
     /**
-     * Read a url and return the content
+     * Read an url and return the content
      *
      * @param urlStr : the url to read
      * @return the content of the url
