@@ -35,7 +35,7 @@ public class AOCRunner extends A_AOC {
         for(String line : inputList) {
             String[] words = line.split(" ");
             if(checkAnagrams) {
-                words = sortWords(words);
+                words = sortLettersForEachWord(words);
             }
             if(isValid(words)) {
                 countValidPassword++;
@@ -44,7 +44,7 @@ public class AOCRunner extends A_AOC {
         return countValidPassword;
     }
 
-    private String[] sortWords(String[] words) {
+    private String[] sortLettersForEachWord(String[] words) {
         List<String> newWords = new ArrayList<>();
         for(String word : words) {
             char[] chars = word.toCharArray();
