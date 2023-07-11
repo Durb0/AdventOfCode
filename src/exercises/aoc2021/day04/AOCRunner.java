@@ -1,12 +1,10 @@
 package exercises.aoc2021.day04;
 
 import utilities.A_AOC;
-import utilities.errors.NoSuchElementInListException;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -15,63 +13,58 @@ import java.util.List;
  * </pre>
  */
 public class AOCRunner extends A_AOC {
-    private final List<Bingo> grids = new ArrayList<>();
 
     @Override
     public void test() {
         if(isExample) {
             super.test(4512, 1924);
         } else {
-            super.test(54275, 13158);
+            super.test(6592, 31755);
         }
     }
 
     @Override
     public void run() {
-        List<String> plays = new ArrayList<>(Arrays.asList(inputList.get(0).split(",")));
+        Bingo myBingo = parseInput();
 
-        List<String> gridLines = new ArrayList<>();
-        for (String str : inputList.subList(2, inputList.size())) {
-            if (str.equals("")) {
-                grids.add(new Bingo(gridLines));
-                gridLines = new ArrayList<>();
-            } else {
-                gridLines.add(str);
-            }
-        }
-        grids.add(new Bingo(gridLines));
 
-        play(plays);
-        Bingo bingo = getFirstWinner(plays);
-        solution1 = result(bingo);
+        Grid winner = myBingo.findWinner();
+        solution1 = winner.result();
 
-        Collections.reverse(plays);
-        Bingo bingo2 = getFirstWinner(plays);
-        solution2 = result(bingo2);
+        Grid loser = myBingo.findLoser();
+        solution2 = loser.result();
     }
 
-    private Bingo getFirstWinner(List<String> plays) {
-        for (String play : plays) {
-            List<Bingo> winnerGrid = grids.stream().filter(bingo -> bingo.getWinPlay().equals(play)).toList();
-            if (!winnerGrid.isEmpty()) {
-                return winnerGrid.get(0);
+
+    public Bingo parseInput(){
+        Bingo bingo = new Bingo();
+        //parse combinaison
+        bingo.setNumbers(Arrays.stream(inputList.get(0).split(",")).map(Integer::parseInt).collect(Collectors.toList()));
+        //remove first line
+        inputList.remove(0);
+        inputList.remove(0);
+        Grid gridTmp = new Grid();
+        for( String line : inputList) {
+            if (line.equals("")){
+                bingo.getGrids().add(gridTmp);
+                gridTmp = new Grid();
+            }
+            else {
+                List<Cell> row = Arrays.stream(line.split(" "))
+                        .filter(v -> !v.equals(""))
+                        .map(Integer::parseInt)
+                        .map(value ->
+                            new Cell.CellBuilder()
+                                    .value(value)
+                                    .passed(false)
+                                    .build()
+                        )
+                        .toList();
+                gridTmp.getGrid().add(row);
             }
         }
-        throw new NoSuchElementInListException();
-    }
-
-    private int result(Bingo bingo) {
-        int sum = bingo.getGridContentByCheck(false).stream().map(Integer::parseInt).mapToInt(Integer::intValue).sum();
-        return sum * Integer.parseInt(bingo.getWinPlay());
-    }
-
-    private void play(List<String> plays) {
-        for (String play : plays) {
-            List<Bingo> notWinGrid = grids.stream().filter(bingo -> !bingo.isWin()).toList();
-            for (Bingo grid : notWinGrid) {
-                grid.play(play);
-            }
-        }
+        bingo.getGrids().add(gridTmp);
+        return bingo;
     }
 
 }

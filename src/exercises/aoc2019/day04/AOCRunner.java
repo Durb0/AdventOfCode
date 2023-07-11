@@ -125,6 +125,7 @@ public class AOCRunner extends A_AOC {
 
 
     private List<Integer> intToList(Integer integer) {
+        // return integer.toCharArray();
         return new java.util.ArrayList<>(Integer.toString(integer).chars().map(c -> c - '0').boxed().toList());
     }
 
