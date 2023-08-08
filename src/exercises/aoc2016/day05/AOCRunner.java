@@ -1,10 +1,8 @@
 package exercises.aoc2016.day05;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import utilities.A_AOC;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <pre>
@@ -19,43 +17,71 @@ public class AOCRunner extends A_AOC {
         if(isExample) {
             super.test("18f47a30", "05ace8e3");
         } else {
-            super.test("f77a0e6e", "999828ec");
+            super.test("", "437e60fc");
         }
     }
 
     @Override
     public void run() {
-        String door = inputList.get(0);
-        solution1 = findDoorPassword(door, false);
-        solution2 = findDoorPassword(door, true);
+        String doorId = this.inputList.get(0);
+        solution1 = this.exo1(doorId);
+        solution2 = this.exo2(doorId);
     }
 
-    private static String findDoorPassword(String input, boolean loadUniques) {
-        Map<Integer, String> hashes = new HashMap<>();
-        int attempt = 0;
-        while (hashes.size() < 8) {
-            String output = "";
-            while(!output.startsWith("00000")) {
-                output =  DigestUtils.md5Hex(input + attempt);
-                attempt++;
+    private String exo1(String doorId){
+        StringBuilder soluce = new StringBuilder();
+        int index = 0;
+        while(soluce.length() != 8){
+            String hash = Hashing.md5().hashString(doorId + index, Charsets.UTF_8).toString();
+            if(isValidHash(hash)){
+                System.out.println("new password find");
+                System.out.println("index : " +index);
+                System.out.println("hash : " +hash);
+                soluce.append(hash.charAt(5));
             }
-            saveNextChar(hashes, output, loadUniques);
+            index++;
         }
-        return String.join("", hashes.values());
+        return soluce.toString();
     }
 
-    private static void saveNextChar(Map<Integer, String> hashes, String output, boolean loadUniques) {
-        if(loadUniques) {
-            try {
-                int index = Character.getNumericValue(output.charAt(5));
-                if (index < 8 && !hashes.containsKey(index)) {
-                    hashes.put(index, String.valueOf(output.charAt(6)));
+    private String exo2(String doorId){
+        StringBuilder soluce = new StringBuilder("________");
+        int index = 0;
+        while(!isvalidSoluce(soluce.toString())){
+            String hash = Hashing.md5().hashString(doorId + index, Charsets.UTF_8).toString();
+            if(isValidHash(hash)){
+                int position = -1;
+                try{
+                    position = Integer.parseInt(String.valueOf(hash.charAt(5)));
+                    if(position < 8 && soluce.charAt(position) == '_'){
+                        soluce.setCharAt(position,hash.charAt(6));
+                        System.out.println(soluce);
+                    }
+                } catch (NumberFormatException e){
+                    System.out.println(hash.charAt(5) + " n'est pas un numéro; index : "+ index);
                 }
-            } catch (Exception ignored) {
-                // Ignored
             }
-        } else {
-            hashes.put(hashes.size(), String.valueOf(output.charAt(5)));
+            index++;
         }
+        return soluce.toString();
     }
+
+    private boolean isvalidSoluce(String soluce){
+        for(int i = 0; i < soluce.length(); i++){
+            if(soluce.charAt(i) == '_'){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isValidHash(String hash){
+        for(int i = 0; i <= 4; i++){
+            if(hash.charAt(i) != '0'){
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
