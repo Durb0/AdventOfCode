@@ -47,7 +47,7 @@ public class AOCRunner extends A_AOC {
     private String exo2(String doorId){
         StringBuilder soluce = new StringBuilder("________");
         int index = 0;
-        while(!isvalidSoluce(soluce.toString())){
+        while(soluce.toString().contains("_")){
             String hash = Hashing.md5().hashString(doorId + index, Charsets.UTF_8).toString();
             if(isValidHash(hash)){
                 int position = -1;
@@ -64,15 +64,6 @@ public class AOCRunner extends A_AOC {
             index++;
         }
         return soluce.toString();
-    }
-
-    private boolean isvalidSoluce(String soluce){
-        for(int i = 0; i < soluce.length(); i++){
-            if(soluce.charAt(i) == '_'){
-                return false;
-            }
-        }
-        return true;
     }
 
     private boolean isValidHash(String hash){
