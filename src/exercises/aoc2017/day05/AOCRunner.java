@@ -25,20 +25,20 @@ public class AOCRunner extends A_AOC {
     @Override
     public void run() {
         List<Integer> list = this.parseInput();
-        solution1 = getSolution(list, false);
-        solution2 = getSolution(list, true);
+        solution1 = findSolution(list, false);
+        solution2 = findSolution(list, true);
     }
 
 
-    public String getSolution(List<Integer> list, boolean partTwo){
-        List<Integer> myList = new ArrayList<>(list);
+    public String findSolution(List<Integer> list, boolean partTwo){
+        List<Integer> numbers = new ArrayList<>(list);
         int count = 0;
         int indice = 0;
-        while (indice < myList.size() && indice >= 0){
-            int currentValue = myList.get(indice);
+        while (indice < numbers.size() && indice >= 0){
+            int currentValue = numbers.get(indice);
             int newIndice = indice + currentValue;
             int newValue = partTwo && currentValue >= 3 ? currentValue -1 : currentValue + 1;
-            myList.set(indice,newValue);
+            numbers.set(indice,newValue);
             indice = newIndice;
             count++;
         }
