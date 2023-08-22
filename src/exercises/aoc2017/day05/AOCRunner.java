@@ -25,32 +25,51 @@ public class AOCRunner extends A_AOC {
     @Override
     public void run() {
         List<Integer> list = this.parseInput();
-        solution1 = findSolution(list, false);
-        solution2 = findSolution(list, true);
+        solution1 = findSolution(list, new Strategy1());
+        solution2 = findSolution(list, new Strategy2());
     }
 
 
-    public String findSolution(List<Integer> list, boolean partTwo){
+    public String findSolution(List<Integer> list, Strategy strategy) {
         List<Integer> numbers = new ArrayList<>(list);
         int count = 0;
         int indice = 0;
-        while (indice < numbers.size() && indice >= 0){
+        while (indice < numbers.size() && indice >= 0) {
             int currentValue = numbers.get(indice);
-            int newIndice = indice + currentValue;
-            int newValue = partTwo && currentValue >= 3 ? currentValue -1 : currentValue + 1;
-            numbers.set(indice,newValue);
-            indice = newIndice;
+            int newValue = strategy.run(currentValue);
+            numbers.set(indice, newValue);
+            indice += currentValue;
             count++;
         }
         return String.valueOf(count);
     }
 
 
-    private List<Integer> parseInput(){
-        List<Integer> res = new ArrayList<>();
-        for(String item: inputList){
-            res.add(Integer.parseInt(item));
-        }
-        return res;
+    private List<Integer> parseInput() {
+        return inputList.stream()
+                .mapToInt(Integer::parseInt)
+                .boxed().toList();
     }
 }
+
+interface Strategy {
+    int run(int value);
+}
+
+class Strategy1 implements Strategy{
+
+    @Override
+    public int run(int value){
+        return value + 1;
+    }
+}
+
+class Strategy2 implements Strategy{
+
+    @Override
+    public int run(int value){
+        return value >= 3 ? value - 1 : value + 1;
+    }
+}
+
+
