@@ -18,26 +18,27 @@ public class AOCRunner extends A_AOC {
         if (isExample) {
             super.test("5", "10");
         } else {
-            super.test("0", "0");
+            super.test("339351", "24315397");
         }
     }
 
     @Override
     public void run() {
         List<Integer> list = this.parseInput();
-        solution1 = getSolution(new ArrayList<>(list), false);
-        solution2 = getSolution(new ArrayList<>(list), true);
+        solution1 = getSolution(list, false);
+        solution2 = getSolution(list, true);
     }
 
 
     public String getSolution(List<Integer> list, boolean partTwo){
+        List<Integer> myList = new ArrayList<>(list);
         int count = 0;
         int indice = 0;
-        while (indice < list.size() && indice >= 0){
-            int currentValue = list.get(indice);
+        while (indice < myList.size() && indice >= 0){
+            int currentValue = myList.get(indice);
             int newIndice = indice + currentValue;
             int newValue = partTwo && currentValue >= 3 ? currentValue -1 : currentValue + 1;
-            list.set(indice,newValue);
+            myList.set(indice,newValue);
             indice = newIndice;
             count++;
         }
