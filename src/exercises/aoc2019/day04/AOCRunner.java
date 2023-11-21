@@ -1,10 +1,14 @@
 package exercises.aoc2019.day04;
 
-import utilities.A_AOC;
 
+import utilities.A_AOC;
+import utilities.Printer;
+
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * <pre>
@@ -13,56 +17,126 @@ import java.util.List;
  * </pre>
  */
 public class AOCRunner extends A_AOC {
+    Pattern regexDoublon = Pattern.compile(".*(\\d)\\1+.*");
+    Pattern regexDoublon2 = Pattern.compile("^(((\\d)*(\\d)+)?(?!\\4))(\\d)\\5(?!\\5)\\d*$");
+    Pattern regexIncrease = Pattern.compile("^0*1*2*3*4*5*6*7*8*9*$");
+
 
     @Override
     public void test() {
         if (isExample) {
-            super.test("2", "1");
+            super.test("62", "1");
         } else {
-            super.test("1169", "757");
+            super.test("931", "0");
         }
     }
 
     @Override
     public void run() {
-        String[] split = inputList.get(0).split("-");
-        int min = Integer.parseInt(split[0]);
-        int max = Integer.parseInt(split[1]);
-        solution1 = countValidPasswords(min, max, false);
-        solution2 = countValidPasswords(min, max, true);
+        List<Integer> interval = parseInput();
+
+        long start1 = System.currentTimeMillis();
+        List<Integer> s1 = getValidPasswords(interval, false);
+        long end1 = System.currentTimeMillis();
+        Printer.println("temps s1 -> " + (end1 - start1));
+
+        solution1 = s1.size();
+        solution2 = getValidPasswords(interval, true).size();
+
+        Printer.println(solution2);
     }
 
-    private int countValidPasswords(int min, int max, boolean checkBiggerGroup) {
-        int countValidPassword = 0;
-        for(int passwordIncr = min; passwordIncr <= max; passwordIncr++) {
-            String password = String.valueOf(passwordIncr);
-            countValidPassword += checkPassword(password, checkBiggerGroup) ? 1 : 0;
-        }
-        return countValidPassword;
-    }
-
-    private boolean checkPassword(String password, boolean checkBiggerGroup) {
-        return isSorted(password) && containsDoublon(password, checkBiggerGroup);
-    }
-
-    private boolean isSorted(String password) {
-        char[] passwordChars = password.toCharArray();
-        char[] sortedChars = passwordChars.clone();
-        Arrays.sort(sortedChars);
-        return Arrays.equals(sortedChars, passwordChars);
-    }
-
-    private boolean containsDoublon(String password, boolean checkBiggerGroup) {
-        List<Character> passwordChars = password.chars()
-                .mapToObj(value -> (char) value)
-                .toList();
-
-        for(char c : passwordChars) {
-            int frequency = Collections.frequency(passwordChars, c);
-            if(frequency == 2 || frequency > 2 && !checkBiggerGroup) {
-                return true;
+    private List<Integer> getValidPasswords(List<Integer> interval, boolean s2) {
+        int n = interval.get(0);
+        List<Integer> validPasswords = new ArrayList<>(List.of());
+        while (n <= interval.get(1)) {
+            boolean checkIncrease = checkIncrease(n);
+            boolean checkDoublon = s2 ? checkDoublon2(n) : checkDoublon(n);
+            if (checkIncrease && checkDoublon) {
+                Printer.println("valid -> " + n);
+                validPasswords.add(n);
+                n++;
+            }
+            else if (!checkIncrease) {
+                n = applyIncrease(n);
+                Printer.println("increase de n -> " + n);
+            }
+            else {
+                n = s2 ? applyDoublon2(n) : applyDoublon(n);
+                Printer.println("ajout d'un doublon à n -> " + n);
             }
         }
-        return false;
+        return validPasswords;
+    }
+
+    private int applyIncrease(int n) {
+        List<Integer> digits = intToList(n);
+        int valuePlate = -1;
+        for (int i = 1; i < digits.size(); i++) {
+            if (valuePlate == -1) {
+                if (digits.get(i) < digits.get(i - 1)) {
+                    valuePlate = digits.get(i - 1);
+                    digits.set(i, valuePlate);
+                }
+            } else {
+                digits.set(i, valuePlate);
+            }
+        }
+        String concatStr = listToInt(digits);
+
+        return Integer.parseInt(concatStr);
+    }
+
+
+    private int applyDoublon(int n) {
+        List<Integer> digits = intToList(n);
+        int lastDigit = digits.get(digits.size() - 1);
+        int beforeLastDigitIndice = digits.size() - 2;
+        digits.set(beforeLastDigitIndice, lastDigit);
+
+        String concatStr = digits.stream()
+                .map(Object::toString).collect(Collectors.joining(""));
+
+        return Integer.parseInt(concatStr);
+    }
+
+    private int applyDoublon2(int number) {
+        int numberTemp = number;
+        boolean valid = false;
+        while (!valid) {
+            numberTemp++;
+            valid = checkDoublon2(numberTemp);
+        }
+        return numberTemp;
+    }
+
+    private boolean checkDoublon(int number) {
+        return regexDoublon.matcher(Integer.toString(number)).find();
+    }
+
+    private boolean checkDoublon2(int number) {
+        return regexDoublon2.matcher(Integer.toString(number)).find();
+    }
+
+
+    private boolean checkIncrease(int number) {
+        return regexIncrease.matcher(Integer.toString(number)).find();
+    }
+
+
+    private List<Integer> intToList(Integer integer) {
+        // return integer.toCharArray();
+        return new java.util.ArrayList<>(Integer.toString(integer).chars().map(c -> c - '0').boxed().toList());
+    }
+
+    private String listToInt(List<Integer> listToConcat) {
+        return listToConcat.stream()
+                .map(Object::toString).collect(Collectors.joining(""));
+    }
+
+    private List<Integer> parseInput() {
+        return Arrays.stream(inputList.get(0).split("-"))
+                .map(Integer::parseInt)
+                .toList();
     }
 }

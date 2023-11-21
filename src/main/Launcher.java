@@ -1,9 +1,12 @@
-import utilities.A_AOC;
+package main;
+
 import utilities.AOCFactory;
-import utilities.FileLoader;
+import utilities.A_AOC;
+import utilities.FileIO;
 import utilities.LauncherArgs;
 import utilities.Printer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.Year;
 
@@ -15,15 +18,15 @@ import static utilities.ArgumentsParser.parseLauncherArgs;
 public class Launcher {
     public static void main(String[] args) throws ClassNotFoundException, IOException {
         LauncherArgs launcherArgs = parseLauncherArgs(args);
-        FileLoader.localSession = FileLoader.readListFromFile("localSession").get(0);
+        saveLocalSession();
 
         String message = launcherArgs.getMessage();
-        if(!message.isEmpty()){
+        if (!message.isEmpty()) {
             Printer.println(message);
             return;
         }
 
-        if(launcherArgs.isTestAll()) {
+        if (launcherArgs.isTestAll()) {
             runAllAOC(launcherArgs);
         } else {
             runAOC(launcherArgs);
@@ -52,9 +55,10 @@ public class Launcher {
         int year = launcherArgs.getYear();
         int day = launcherArgs.getDay();
         boolean isExample = launcherArgs.isExample();
+        boolean getFromURL = !launcherArgs.isTestAll();
 
         try {
-            aoc = AOCFactory.getAOC(year, day, isExample);
+            aoc = AOCFactory.getAOC(year, day, isExample, getFromURL);
         } catch (Exception e) {
             throw new ClassNotFoundException();
         }
@@ -63,9 +67,18 @@ public class Launcher {
         aoc.test();
 
         boolean print = launcherArgs.isPrint();
-        if(print) {
+        if (print) {
             Printer.println("Solution 1 : " + aoc.getSolution1());
             Printer.println("Solution 2 : " + aoc.getSolution2());
+        }
+    }
+
+    private static void saveLocalSession() throws IOException {
+        try {
+            FileIO.saveLocalSession();
+        } catch (IOException e) {
+            FileIO.createLocalSession();
+            throw new FileNotFoundException("Your localSession file has been created, please fill it in");
         }
     }
 }

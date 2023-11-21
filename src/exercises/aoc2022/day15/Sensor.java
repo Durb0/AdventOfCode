@@ -1,9 +1,9 @@
 package exercises.aoc2022.day15;
 
+import exercises.objects.Position;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import exercises.objects.Position;
 
 import java.util.ArrayList;
 import java.util.List;

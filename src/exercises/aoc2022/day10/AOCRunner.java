@@ -1,7 +1,9 @@
 package exercises.aoc2022.day10;
 
-import utilities.errors.NotAcceptedValue;
 import utilities.A_AOC;
+import utilities.errors.NotAcceptedValue;
+
+import static utilities.FileIO.DELIMITER;
 
 /**
  * <pre>
@@ -18,26 +20,28 @@ public class AOCRunner extends A_AOC {
 
     @Override
     public void test() {
-        if(isExample) {
-            super.test(13140,
-                    """
-                    ##  ##  ##  ##  ##  ##  ##  ##  ##  ##\r
-                    ###   ###   ###   ###   ###   ###   ###\r
-                    ####    ####    ####    ####    ####\r
-                    #####     #####     #####     #####\r
-                    ######      ######      ######      ###\r
-                    #######       #######       #######\r
-                    """);
+        if (isExample) {
+            //@formatter:off
+            String sb =
+                    "##  ##  ##  ##  ##  ##  ##  ##  ##  ##" + DELIMITER +
+                    "###   ###   ###   ###   ###   ###   ###" + DELIMITER +
+                    "####    ####    ####    ####    ####" + DELIMITER +
+                    "#####     #####     #####     #####" + DELIMITER +
+                    "######      ######      ######      ###" + DELIMITER +
+                    "#######       #######       #######" + DELIMITER;
+            //@formatter:on
+            super.test(13140, sb);
         } else {
-            super.test(11780,
-                    """
-                    ###  #### #  # #    ###   ##  #  #  ##\r
-                    #  #    # #  # #    #  # #  # #  # #  #\r
-                    #  #   #  #  # #    ###  #  # #  # #  #\r
-                    ###   #   #  # #    #  # #### #  # ####\r
-                    #    #    #  # #    #  # #  # #  # #  #\r
-                    #    ####  ##  #### ###  #  #  ##  #  #\r
-                    """);
+            //@formatter:off
+            String sb =
+                    "###  #### #  # #    ###   ##  #  #  ##" + DELIMITER +
+                    "#  #    # #  # #    #  # #  # #  # #  #" + DELIMITER +
+                    "#  #   #  #  # #    ###  #  # #  # #  #" + DELIMITER +
+                    "###   #   #  # #    #  # #### #  # ####" + DELIMITER +
+                    "#    #    #  # #    #  # #  # #  # #  #" + DELIMITER +
+                    "#    ####  ##  #### ###  #  #  ##  #  #" + DELIMITER;
+            //@formatter:on
+            super.test(11780, sb);
         }
     }
 
@@ -104,7 +108,7 @@ public class AOCRunner extends A_AOC {
             screen += " ";
         }
         if (tick % 40 == 0) {
-            screen = screen.trim() + "\r\n";
+            screen = screen.trim() + DELIMITER;
         }
     }
 }

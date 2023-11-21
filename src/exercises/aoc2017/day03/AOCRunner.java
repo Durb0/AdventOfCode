@@ -1,8 +1,8 @@
 package exercises.aoc2017.day03;
 
-import utilities.A_AOC;
 import exercises.objects.Direction;
 import exercises.objects.Position;
+import utilities.A_AOC;
 
 import java.util.HashMap;
 import java.util.Map;

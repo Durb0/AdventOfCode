@@ -1,8 +1,8 @@
 package exercises.aoc2022.day15;
 
-import utilities.A_AOC;
 import exercises.objects.Position;
 import exercises.objects.Range;
+import utilities.A_AOC;
 
 import java.util.ArrayList;
 import java.util.Collections;

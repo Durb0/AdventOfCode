@@ -1,5 +1,7 @@
 package utilities;
 
+import static utilities.FileIO.DELIMITER;
+
 public class ArgumentsParser {
     private ArgumentsParser(){}
 
@@ -13,7 +15,7 @@ public class ArgumentsParser {
                 case "-e", "-isExample" -> argsRecord.setExample(true);
                 case "-t", "-testAll" -> argsRecord.setTestAll(true);
                 case "-h", "-help" -> {
-                    String message = String.join("\r\n",
+                    String message = String.join(DELIMITER,
                             "",
                             "Available arguments: ",
                             "",

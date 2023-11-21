@@ -1,14 +1,11 @@
 package exercises.aoc2018.day04;
 
-import utilities.errors.NoSuchElementInListException;
-import utilities.errors.NotAcceptedValue;
 import utilities.A_AOC;
+import utilities.Printer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * <pre>
@@ -18,98 +15,112 @@ import java.util.regex.Pattern;
  */
 public class AOCRunner extends A_AOC {
 
-    private static final String GUARD_ID = "]\\D*(\\d+)";
-    private static final String MINUTE = ":(\\d+)";
+    SimpleDateFormat dateParser = new SimpleDateFormat("yyyy-MM-dd HH:mm"); //notre formatter pour recuperer les dates
 
     @Override
     public void test() {
         if (isExample) {
-            super.test("240", "4455");
+            super.test(240, 4455);
         } else {
-            super.test("38813", "141071");
+            super.test(63509, null);
         }
     }
 
     @Override
     public void run() {
-        sortInput();
-        List<Guard> guards = parseInput();
-        Guard bigestSleeper = getBigestSleeper(guards);
-        solution1 = bigestSleeper.getGuardId() * bigestSleeper.getMostFrequentSleptMinute();
-        solution2 = computeSolution2(guards);
+        List<DodoSession> dodoSessions = parseInputList(inputList);
+        long grosDormeurId = getPlusGrosDormeur(dodoSessions);
+
+        Printer.println("notre gros dormeur est -> " + grosDormeurId);
+
+        long bestMinute = getBestDodoMinute(dodoSessions, grosDormeurId);
+
+        Printer.println("meilleur minute pour " + grosDormeurId + " -> " + bestMinute);
+
+        solution1 = bestMinute * grosDormeurId;
+
     }
 
-    private void sortInput() {
-        inputList = inputList.stream().sorted(String::compareTo).toList();
-    }
+    private long getPlusGrosDormeur(List<DodoSession> dodoSessions) {
+        HashMap<Long, Long> leaderBoard = new HashMap<>();
 
-    private List<Guard> parseInput() {
-        List<Guard> guards = new ArrayList<>();
-        int currentGuardId = 0;
-        String sleepingLine = "";
-        for (String line : inputList) {
-            if (isBeginShift(line)) {
-                currentGuardId = extractData(line, GUARD_ID);
-            } else if (isWakeUp(line)) {
-                extractGuard(guards, currentGuardId, sleepingLine, line);
+        dodoSessions.forEach(dodoSession -> {
+            if (leaderBoard.containsKey(dodoSession.getGuardID())) {
+                Long newResult = leaderBoard.get(dodoSession.getGuardID()) + dodoSession.calculateDodoTime();
+                leaderBoard.replace(dodoSession.getGuardID(), newResult);
             } else {
-                sleepingLine = line;
+                leaderBoard.put(dodoSession.getGuardID(), dodoSession.calculateDodoTime());
             }
-        }
-        return guards;
+        });
+
+        return Collections.max(leaderBoard.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
-    private boolean isBeginShift(String line) {
-        return line.contains("begins shift");
+
+    private long getBestDodoMinute(List<DodoSession> dodoSessions, Long guardId) {
+        //On garde uniquement les dodosessions de notre gros dormeur
+        List<DodoSession> listFiltered = dodoSessions.stream()
+                .filter(dodoSession -> dodoSession.getGuardID().equals(guardId)).toList();
+
+
+        Map<Long, Long> calendar = new HashMap<>();
+        listFiltered.forEach(
+                dodoSession -> {
+                    long count = 0;
+                    while (count < dodoSession.calculateDodoTime()) {
+                        long minute = (count + dodoSession.getStart().getMinutes()) % 60;
+                        if (calendar.containsKey(minute)) {
+                            long newCount = calendar.get(minute) + 1;
+                            calendar.replace(minute, newCount);
+                        } else {
+                            calendar.put(minute, 1L);
+                        }
+                        count++;
+                    }
+                }
+        );
+
+
+        return Collections.max(calendar.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 
-    private boolean isWakeUp(String line) {
-        return line.contains("wakes up");
-    }
+    private List<DodoSession> parseInputList(List<String> inputList) {
 
-    private void extractGuard(List<Guard> guards, int currentGuardId, String sleepingLine, String wakeUpLine) {
-        int timeSleep = extractData(sleepingLine, MINUTE);
-        int timeWakeUp = extractData(wakeUpLine, MINUTE);
-        for (int minute = timeSleep; minute < timeWakeUp; minute++) {
-            Guard guard = guards.stream()
-                    .filter(guard1 -> guard1.getGuardId() == currentGuardId)
-                    .findFirst()
-                    .orElse(new Guard(currentGuardId));
-            if (!guards.contains(guard)) {
-                guards.add(guard);
-            }
-            guard.incrementSleep(minute);
-        }
-    }
 
-    private int extractData(String line, String information) {
-        Pattern pattern = Pattern.compile(information);
-        Matcher matcher = pattern.matcher(line);
-        if (matcher.find()) {
-            return Integer.parseInt(matcher.group(1));
-        }
-        throw new NotAcceptedValue(line);
-    }
 
-    private static Guard getBigestSleeper(List<Guard> guards) {
-        return guards.stream()
-                .max(Guard::compareTo)
-                .orElseThrow(NoSuchElementException::new);
-    }
+        List<DodoSession> dodoSessions = new ArrayList<>();
 
-    private int computeSolution2(List<Guard> guards) {
-        int bigestFrequencyOfThemAll = guards.stream()
-                .map(Guard::getBigestFrequency)
-                .max(Integer::compareTo)
-                .orElseThrow();
+        Map<Date, String> sortedLogs = new TreeMap<>(); //plus utiliser Map (programation par interface)
 
-        for(Guard guard : guards) {
-            Integer minuteByFrequency = guard.getMinuteByFrequency(bigestFrequencyOfThemAll);
-            if(guard.getMinuteByFrequency(bigestFrequencyOfThemAll) != null) {
-                return guard.getGuardId() * minuteByFrequency;
-            }
+
+        //on recupère proprement les logs
+        for (String input : inputList) {
+            String[] lineCut = input.split("] ");
+            String log = lineCut[1];
+            String dateString = lineCut[0].substring(1);
+            sortedLogs.put(dateParser.parse(dateString, new ParsePosition(0)), log);
         }
 
-        throw new NoSuchElementInListException();
+        Printer.println(sortedLogs);
+
+        Long guardID = null;
+        Date start = null;
+        Date end;
+
+        //On crée nos instance de DodoSessions à partir de nos logs triés
+        for (Map.Entry<Date, String> log : sortedLogs.entrySet()) {
+            String[] logList = log.getValue().split(" ");
+            switch (logList[0]) {
+                case ("Guard") -> guardID = Long.parseLong(logList[1].substring(1));
+                case ("falls") -> start = log.getKey();
+                case ("wakes") -> {
+                    end = log.getKey();
+                    dodoSessions.add(new DodoSession(guardID, start, end));
+                }
+                default -> Printer.println("Valeur manquante -> " + logList[0]); //faire un Throw
+            } // pas opti
+        }
+
+        return dodoSessions;
     }
 }

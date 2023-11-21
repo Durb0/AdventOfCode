@@ -8,6 +8,7 @@ public class LauncherArgs {
     int year;
     boolean print;
     boolean isExample;
+    boolean getFromURL;
     boolean testAll;
     String message;
 

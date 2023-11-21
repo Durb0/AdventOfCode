@@ -107,7 +107,7 @@ public class AOCRunner extends A_AOC {
      * @param list       : The list of string to filter
      * @param position      : The current position of the character to filter on
      * @param mostCommon : set if we are looking for the most (true) or least (false) common character
-     * @return the string containing the most/least common character recursively
+     * @return the string containing the most/the least common character recursively
      */
     private String extractCharacterRateRecursive(List<String> list, int position, boolean mostCommon) {
         if (list.size() <= 1) {

@@ -1,7 +1,7 @@
 package exercises.aoc2022.day14;
 
-import utilities.A_AOC;
 import exercises.objects.Position;
+import utilities.A_AOC;
 
 import java.util.List;
 import java.util.stream.Stream;

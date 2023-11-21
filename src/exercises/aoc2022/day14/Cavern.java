@@ -1,10 +1,12 @@
 package exercises.aoc2022.day14;
 
-import lombok.Setter;
 import exercises.objects.Position;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static utilities.FileIO.DELIMITER;
 
 public class Cavern {
     private final Map<Position, Block> grid = new HashMap<>();
@@ -109,7 +111,7 @@ public class Cavern {
             for (Position position : Position.interval(new Position(positionMin.getX(), y), new Position(positionMax.getX(), y))) {
                 stringBuilder.append(grid.get(position));
             }
-            stringBuilder.append("\r\n");
+            stringBuilder.append(DELIMITER);
         }
         return stringBuilder.toString();
     }

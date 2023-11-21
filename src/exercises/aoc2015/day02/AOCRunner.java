@@ -12,7 +12,6 @@ import java.util.List;
  * </pre>
  */
 public class AOCRunner extends A_AOC {
-    private final List<Present> presents = new ArrayList<>();
 
     @Override
     public void test() {
@@ -25,6 +24,14 @@ public class AOCRunner extends A_AOC {
 
     @Override
     public void run() {
+        List<Present> presents = initPresents();
+
+        solution1 = presents.stream().map(Present::getPaper).mapToInt(Integer::intValue).sum();
+        solution2 = presents.stream().map(Present::getRibbon).mapToInt(Integer::intValue).sum();
+    }
+
+    private List<Present> initPresents() {
+        List<Present> presents = new ArrayList<>();
         for (String item : inputList) {
             String[] dimensions = item.split("x");
             int length = Integer.parseInt(dimensions[0]);
@@ -33,8 +40,6 @@ public class AOCRunner extends A_AOC {
             Present present = new Present(length, width, height);
             presents.add(present);
         }
-
-        solution1 = presents.stream().map(Present::getPaper).mapToInt(Integer::intValue).sum();
-        solution2 = presents.stream().map(Present::getRibbon).mapToInt(Integer::intValue).sum();
+        return presents;
     }
 }

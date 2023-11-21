@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static utilities.FileIO.DELIMITER;
+
 /**
  * <pre>
  * AdventOfCode 2022 day 1's instructions are <a href="https://adventofcode.com/2022/day/1">here</a>
@@ -37,11 +39,11 @@ public class AOCRunner extends A_AOC {
     }
 
     private void createBackPacks(List<String> list) {
-        String baseInput = String.join("\r\n", list);
-        String[] backpacksStr = baseInput.split("\r\n\r\n");
+        String baseInput = String.join(DELIMITER, list);
+        String[] backpacksStr = baseInput.split(DELIMITER + DELIMITER);
 
         backpacks = new ArrayList<>(Stream.of(backpacksStr)
-                .map(backpack -> Stream.of(backpack.split("\r\n"))
+                .map(backpack -> Stream.of(backpack.split(DELIMITER))
                         .mapToInt(Integer::parseInt)
                         .sum()
                 )
