@@ -24,21 +24,21 @@ public class AOCRunner extends A_AOC {
     }
 
     @Override
-    public void run(){
-        String bagName= "shiny gold";
+    public void run() {
+        String bagName = "shiny gold";
         ArrayList<Bag> bags = this.parseInput();
-        solution1 = this.inHowManyBag(bags,bagName);
-        solution2 = this.howManyBags(bags, bagName) - 1;
+        solution1 = this.inHowManyBag(bags, bagName);
+        solution2 = this.howManyBags(bags, bagName);
     }
 
-    private Integer inHowManyBag(ArrayList<Bag> bags, String bagName){
+    private Integer inHowManyBag(ArrayList<Bag> bags, String bagName) {
         Set<String> step = new HashSet<>(List.of(bagName));
         Set<String> totals = new HashSet<>(List.of());
-        while(!step.isEmpty()){
+        while (!step.isEmpty()) {
             Set<String> newStep = new HashSet<>(List.of());
-            for(Bag bag : bags){
-                for(Map.Entry<String,Integer> subBag: bag.getSubBags().entrySet()){
-                    if(step.contains(subBag.getKey())){
+            for (Bag bag : bags) {
+                for (Map.Entry<String, Integer> subBag : bag.getSubBags().entrySet()) {
+                    if (step.contains(subBag.getKey())) {
                         newStep.add(bag.getName());
                     }
                 }
@@ -50,40 +50,40 @@ public class AOCRunner extends A_AOC {
     }
 
     private Integer howManyBags(ArrayList<Bag> bags, String bagName) {
-        int count = 1;
-        try{
+        int count = 0;
+        try {
             Bag myBag = this.findBag(bags, bagName);
-            for(Map.Entry<String, Integer> subBag: myBag.getSubBags().entrySet()){
-                count += subBag.getValue() * this.howManyBags(bags, subBag.getKey());
+            for (Map.Entry<String, Integer> subBag : myBag.getSubBags().entrySet()) {
+                count += subBag.getValue() * this.howManyBags(bags, subBag.getKey()) + subBag.getValue();
             }
             return count;
-        }catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     private Bag findBag(ArrayList<Bag> bags, String name) throws Exception {
-        for(Bag bag: bags){
-            if(Objects.equals(bag.getName(), name)){
+        for (Bag bag : bags) {
+            if (Objects.equals(bag.getName(), name)) {
                 return bag;
             }
         }
-        throw new Exception("Bag "+name+" not found");
+        throw new Exception("Bag " + name + " not found");
     }
 
 
-    private ArrayList<Bag> parseInput(){
+    private ArrayList<Bag> parseInput() {
         ArrayList<Bag> bags = new ArrayList<>();
-        for(String input : inputList) {
+        for (String input : inputList) {
             Pattern pattern = Pattern.compile("^(?<name>\\w+ \\w+) bags contain (?<subBags>(?:\\d+ \\w+ \\w+ bags?(?:, )?)+|no other bags).$");
             Matcher matcher = pattern.matcher(input);
-            if(matcher.matches()) {
+            if (matcher.matches()) {
                 Bag bag = new Bag(matcher.group("name"));
                 List<String> subBagsInputs = List.of(matcher.group("subBags").split(", ?"));
-                for(String subBagsInput: subBagsInputs){
+                for (String subBagsInput : subBagsInputs) {
                     Pattern subPattern = Pattern.compile("^(?<number>\\d)\\s(?<name>\\w+\\s\\w+)\\sbags?$");
                     Matcher subMatcher = subPattern.matcher(subBagsInput);
-                    if(subMatcher.matches()){
+                    if (subMatcher.matches()) {
                         bag.addSubBag(subMatcher.group("name"), Integer.valueOf(subMatcher.group("number")));
                     }
                 }
